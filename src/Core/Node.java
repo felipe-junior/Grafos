@@ -21,4 +21,9 @@ public class Node {
 		public int getId() {
 			return Id;
 		}
+		
+		public int GetDegree()
+		{
+			return Neighbors.size();
+		}
 }

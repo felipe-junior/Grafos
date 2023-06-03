@@ -6,7 +6,7 @@ public class main {
 		var filepath = "src/Core/graph.txt";
 		var graph = new Graph();
 		graph.BuildGraphFromFile(filepath);
-		var a = "";
+		graph.DisplayGraphInfo();
 	}
 
 }

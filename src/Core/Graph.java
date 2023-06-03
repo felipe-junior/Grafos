@@ -3,6 +3,7 @@ package Core;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -11,24 +12,27 @@ public class Graph {
 	
 
 	private List<Node> Nodes;
+	private List<Edge> Edges;
+	private int NodesCount;
 	
 	public Graph()
 	{
 		Nodes = new ArrayList<Node>();
+		Edges = new ArrayList<Edge>();
 	}
 	
 	public void BuildGraphFromFile(String path)
 	{	
 		try {
-			var edges = FileParser(path);
-			for (Edge edge : edges) {
+			this.FileParser(path);
+			for (Edge edge : this.Edges) {
 				
-				var nodeA = Nodes.stream()
+				var nodeA = this.Nodes.stream()
                 .filter(n -> n.getId() == edge.NodeA)
                 .findFirst()
                 .orElse(null);
 				
-				var nodeB = Nodes.stream()
+				var nodeB = this.Nodes.stream()
 		                .filter(n -> n.getId() == edge.NodeB)
 		                .findFirst()
 		                .orElse(null);
@@ -36,13 +40,13 @@ public class Graph {
 				if(nodeA == null)
 				{
 					nodeA = new Node(edge.NodeA);
-					Nodes.add(nodeA);
+					this.Nodes.add(nodeA);
 				}
 				
 				if(nodeB == null)
 				{
 					nodeB = new Node(edge.NodeB);
-					Nodes.add(nodeB);
+					this.Nodes.add(nodeB);
 				}
 				
 				nodeA.AddNeighbor(nodeB.getId());
@@ -57,16 +61,32 @@ public class Graph {
 	}
 	
 	
-	//Private methods
-	private List<Edge> FileParser(String path) throws FileNotFoundException
+	public void DisplayGraphInfo()
 	{
-		List<Edge> edges = new ArrayList<Edge>();
-        
+		System.out.println("# n = "+ this.NodesCount); //vertex number
+		System.out.println("# m = "+ this.Edges.size()); //Edges number
+		System.out.println("# d = "+ this.CalculateAverageDegree());//Grau
+	}
+	
+	
+	//Private methods
+	
+	private float CalculateAverageDegree()
+	{
+		int degreeCount = 0;
+		for (var node : this.Nodes) {
+			degreeCount += node.GetDegree();
+		}
+		return (float) degreeCount / this.NodesCount;
+	}
+	
+	private void FileParser(String path) throws FileNotFoundException
+	{   
 		System.out.println("Reading file");
 		
         File myObj = new File(path);
 		Scanner myReader = new Scanner(myObj);
-		var nodesCount = Integer.parseInt(myReader.nextLine());
+		this.NodesCount = Integer.parseInt(myReader.nextLine());
 		while (myReader.hasNextLine()) {
 		    String data = myReader.nextLine();
 		    String[] values = data.split(" ");
@@ -80,14 +100,13 @@ public class Graph {
 		    }
 		    
 		    System.out.println(nodeA + " " + nodeB + (weight == null ? "" : weight));
-		    edges.add(new Edge(nodeA, nodeB, weight));
+		    this.Edges.add(new Edge(nodeA, nodeB, weight));
 		}
         
 		System.out.println("End of file reading");
         
         myReader.close();
         
-        return edges;
 	}
 		
 }
