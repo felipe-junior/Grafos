@@ -1,27 +1,26 @@
 package Core;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class AdjacentListGraphRepresentationStrategy implements IGraphRepresentation {
 
-	private ArrayList<ArrayList<Integer>> AdjacentList;
+	private ArrayList<LinkedList<Integer>> AdjacentList;
 	private List<Edge> Edges;
 	
 	public AdjacentListGraphRepresentationStrategy()
 	{
-		AdjacentList = new ArrayList<ArrayList<Integer>>();
 	}
 	
 	public void Initialize(int numberOfVertex, List<Edge> edges)
 	{
 		this.Edges = edges;
-		this.AdjacentList = new ArrayList<ArrayList<Integer>>(numberOfVertex+1); 
+		this.AdjacentList = new ArrayList<LinkedList<Integer>>(numberOfVertex+1); 
 		//Primeira linha do array ta vazio pq o grafo começa sempre com 1
 		for (int i = 0; i <= numberOfVertex; i++)
 		{
-			AdjacentList.add(new ArrayList<Integer>());
+			AdjacentList.add(new LinkedList<Integer>());
 		}
 		
 		for (Edge edge : this.Edges)
