@@ -10,16 +10,16 @@ import java.util.stream.Collectors;
 
 
 public class Graph {
-	
-
 	private List<Node> Nodes;
 	private List<Edge> Edges;
 	private int NodesCount;
+	private IGraphRepresentation Graph;
 	
-	public Graph()
+	public Graph(IGraphRepresentation graph)
 	{
 		Nodes = new ArrayList<Node>();
 		Edges = new ArrayList<Edge>();
+		Graph = graph;
 	}
 	
 	public void BuildGraphFromFile(String path)
@@ -127,7 +127,8 @@ public class Graph {
 		    System.out.println(nodeA + " " + nodeB + (weight == null ? "" : weight));
 		    this.Edges.add(new Edge(nodeA, nodeB, weight));
 		}
-        
+		this.Graph.Initialize(this.Edges);
+		
 		System.out.println("End of file reading");
         
         myReader.close();
