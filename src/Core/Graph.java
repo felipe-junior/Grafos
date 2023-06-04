@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 
 public class Graph {
@@ -66,10 +67,34 @@ public class Graph {
 		System.out.println("# n = "+ this.NodesCount); //vertex number
 		System.out.println("# m = "+ this.Edges.size()); //Edges number
 		System.out.println("# d = "+ this.CalculateAverageDegree());//Grau
+		this.CalculateAndDisplayEmpiricDistribution();
 	}
 	
 	
 	//Private methods
+	
+	private void CalculateAndDisplayEmpiricDistribution()
+	{
+		int maxDegree = 0;
+		for (Node node : this.Nodes)
+		{
+			if(maxDegree < node.GetDegree())
+			{
+				maxDegree = node.GetDegree();
+			}
+			
+			node.GetDegree();
+		}
+		
+		for (int i = 1; i <= maxDegree; i++) {
+			int degree = i;
+			List<Node> nodes = this.Nodes.stream()
+	            .filter(n -> n.GetDegree() == degree)
+	            .collect(Collectors.toList());
+			Float frequency = (float) nodes.size() / this.Nodes.size();
+			System.out.println(i + " " + String.format(frequency.toString(),"%.2f"));
+		}
+	}
 	
 	private float CalculateAverageDegree()
 	{
