@@ -9,16 +9,11 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 
-public class Graph {
-	private List<Node> Nodes;
-	private List<Edge> Edges;
-	private int NodesCount;
+public class GraphManager {
 	private IGraphRepresentation Graph;
 	
-	public Graph(IGraphRepresentation graph)
+	public GraphManager(IGraphRepresentation graph)
 	{
-		Nodes = new ArrayList<Node>();
-		Edges = new ArrayList<Edge>();
 		Graph = graph;
 	}
 	
@@ -26,34 +21,6 @@ public class Graph {
 	{	
 		try {
 			this.FileParser(path);
-			for (Edge edge : this.Edges) {
-				
-				var nodeA = this.Nodes.stream()
-                .filter(n -> n.getId() == edge.NodeA)
-                .findFirst()
-                .orElse(null);
-				
-				var nodeB = this.Nodes.stream()
-		                .filter(n -> n.getId() == edge.NodeB)
-		                .findFirst()
-		                .orElse(null);
-				
-				if(nodeA == null)
-				{
-					nodeA = new Node(edge.NodeA);
-					this.Nodes.add(nodeA);
-				}
-				
-				if(nodeB == null)
-				{
-					nodeB = new Node(edge.NodeB);
-					this.Nodes.add(nodeB);
-				}
-				
-				nodeA.AddNeighbor(nodeB.getId());
-				nodeB.AddNeighbor(nodeA.getId());
-			}
-			System.out.println("Node count: " + Nodes.size());
 		}		
 		 catch (FileNotFoundException e) {
 	            System.out.println("An error occurred.");
@@ -64,8 +31,8 @@ public class Graph {
 	
 	public void DisplayGraphInfo()
 	{
-		System.out.println("# n = "+ this.NodesCount); //vertex number
-		System.out.println("# m = "+ this.Edges.size()); //Edges number
+		System.out.println("# n = "+ Graph.GetNumberOfNodes()); //vertex number
+		System.out.println("# m = "+ Graph.GetNumberOfEdges()); //Edges number
 		System.out.println("# d = "+ this.CalculateAverageDegree());//Grau
 		this.CalculateAndDisplayEmpiricDistribution();
 	}
@@ -75,23 +42,9 @@ public class Graph {
 	
 	private void CalculateAndDisplayEmpiricDistribution()
 	{
-		int maxDegree = 0;
-		for (Node node : this.Nodes)
-		{
-			if(maxDegree < node.GetDegree())
-			{
-				maxDegree = node.GetDegree();
-			}
-			
-			node.GetDegree();
-		}
-		
+		int maxDegree = this.Graph.GetMaximumDegree();	
 		for (int i = 1; i <= maxDegree; i++) {
-			int degree = i;
-			List<Node> nodes = this.Nodes.stream()
-	            .filter(n -> n.GetDegree() == degree)
-	            .collect(Collectors.toList());
-			Float frequency = (float) nodes.size() / this.Nodes.size();
+			Float frequency = (float) this.Graph.GetNumberOfNodesByDegree(i) / this.Graph.GetNumberOfNodes();
 			System.out.println(i + " " + String.format(frequency.toString(),"%.2f"));
 		}
 	}
@@ -99,10 +52,10 @@ public class Graph {
 	private float CalculateAverageDegree()
 	{
 		int degreeCount = 0;
-		for (var node : this.Nodes) {
-			degreeCount += node.GetDegree();
+		for (int node = 1 ; node <= this.Graph.GetNumberOfNodes(); node++) {
+			degreeCount += this.Graph.GetNodeDegree(node);
 		}
-		return (float) degreeCount / this.NodesCount;
+		return (float) degreeCount / this.Graph.GetNumberOfNodes();
 	}
 	
 	private void FileParser(String path) throws FileNotFoundException
@@ -111,7 +64,8 @@ public class Graph {
 		
         File myObj = new File(path);
 		Scanner myReader = new Scanner(myObj);
-		this.NodesCount = Integer.parseInt(myReader.nextLine());
+		var numberOfVertex = Integer.parseInt(myReader.nextLine());
+		var edges = new ArrayList<Edge>();
 		while (myReader.hasNextLine()) {
 		    String data = myReader.nextLine();
 		    String[] values = data.split(" ");
@@ -125,9 +79,9 @@ public class Graph {
 		    }
 		    
 		    System.out.println(nodeA + " " + nodeB + (weight == null ? "" : weight));
-		    this.Edges.add(new Edge(nodeA, nodeB, weight));
+		    edges.add(new Edge(nodeA, nodeB, weight));
 		}
-		this.Graph.Initialize(this.Edges);
+		this.Graph.Initialize(numberOfVertex, edges);
 		
 		System.out.println("End of file reading");
         

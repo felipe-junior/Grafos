@@ -19,47 +19,64 @@ public class AdjacentListGraphRepresentationStrategy implements IGraphRepresenta
 		this.Edges = edges;
 		this.AdjacentList = new ArrayList<ArrayList<Integer>>(numberOfVertex+1); 
 		//Primeira linha do array ta vazio pq o grafo começa sempre com 1
-		for (int i = 1; i <= numberOfVertex; i++)
+		for (int i = 0; i <= numberOfVertex; i++)
 		{
 			AdjacentList.add(new ArrayList<Integer>());
 		}
 		
 		for (Edge edge : this.Edges)
 		{
-			AdjacentList.get(edge.NodeA).add(edge.NodeB);
-			AdjacentList.get(edge.NodeB).add(edge.NodeA);
+			this.AddEdge(edge);
 		}
 		
 	}
 
 	@Override
-	public int AddEdge(Edge edge) {
-		// TODO Auto-generated method stub
-		return 0;
+	public void AddEdge(Edge edge) {
+		AdjacentList.get(edge.NodeA).add(edge.NodeB);
+		AdjacentList.get(edge.NodeB).add(edge.NodeA);
 	}
 
 	@Override
 	public int GetNumberOfNodes() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.AdjacentList.size() - 1;
 	}
 
 	@Override
 	public int GetNodeDegree(int node) {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.AdjacentList.get(node).size();
 	}
 
 	@Override
-	public int GetNumberOfNodesByDegree(int node) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int GetNumberOfNodesByDegree(int degree) {
+		var count = 0; 
+		for (int node = 1; node <= GetNumberOfNodes(); node++)
+		{
+			if (this.GetNodeDegree(node) == degree)
+			{
+				count++;
+			}
+		}
+		return count;
 	}
 
 	@Override
 	public int GetMaximumDegree() {
-		// TODO Auto-generated method stub
-		return 0;
+		int maxDegree = 0;
+		for (int i = 1; i <= this.GetNumberOfNodes(); i++)
+		{	
+			var degree = this.GetNodeDegree(i);
+			if(maxDegree < degree)
+			{
+				maxDegree = degree;
+			}
+		}
+		return maxDegree;
+	}
+
+	@Override
+	public int GetNumberOfEdges() {
+		return this.Edges.size();
 	}
 
 }
