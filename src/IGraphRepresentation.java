@@ -1,5 +1,3 @@
-package Core;
-
 import java.util.List;
 
 public interface IGraphRepresentation {

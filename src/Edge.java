@@ -1,5 +1,3 @@
-package Core;
-
 class Edge
 {
 	int NodeA;

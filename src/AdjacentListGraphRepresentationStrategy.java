@@ -1,5 +1,3 @@
-package Core;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +15,7 @@ public class AdjacentListGraphRepresentationStrategy implements IGraphRepresenta
 	{
 		this.Edges = edges;
 		this.AdjacentList = new ArrayList<LinkedList<Integer>>(numberOfVertex+1); 
-		//Primeira linha do array ta vazio pq o grafo começa sempre com 1
+		//Primeira linha do array ta vazio pq o grafo comeï¿½a sempre com 1
 		for (int i = 0; i <= numberOfVertex; i++)
 		{
 			AdjacentList.add(new LinkedList<Integer>());
