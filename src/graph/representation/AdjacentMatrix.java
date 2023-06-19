@@ -2,16 +2,12 @@ package graph.representation;
 
 import graph.Edge;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class AdjacentMatrix implements IGraphRepresentation {
 
 	private Float[][] adjacentMatrix;
 	private List<Edge> edges;
-	private boolean[] visited;
 	private boolean hasWeight;
 
 	public AdjacentMatrix() { }
@@ -32,38 +28,109 @@ public class AdjacentMatrix implements IGraphRepresentation {
 	@Override
 	public String getDfsTree(){
 		StringBuilder tree = new StringBuilder();
-		visited = new boolean[adjacentMatrix.length];
+		var visited = new boolean[adjacentMatrix.length];
 		int root = 0;
-		dfs(root, 0, tree);
+		dfs(root, 0, tree, visited);
 		return tree.toString();
 	}
 
 	@Override
 	public String getBfsTree(){
 		StringBuilder tree = new StringBuilder();
-		visited = new boolean[adjacentMatrix.length];
+		var visited = new boolean[adjacentMatrix.length];
 		int root = 0;
-		bfs(root, tree);
+		bfs(root, tree, visited);
 		return tree.toString();
 	}
 
-	private void dfs(int node, int level, StringBuilder tree) {
+	@Override
+	public String FindAndShowConnectedComponents() {
+		// Cria um array de inteiros com o tamanho do número de vértices do grafo G
+		Integer[] cc = new Integer[adjacentMatrix.length];
+		// Inicializa todos os elementos do array com -1
+		Arrays.fill(cc, -1);
+		int count = 0;
+		// Para cada vértice v no grafo G
 
-		this.visited[node] = true;
+		for (int v = 0; v < adjacentMatrix.length; v++) {
+			// Se o valor de cc[v] for -1, então ainda não foi visitado
+			if (cc[v] == -1) {
+				dfsRcc(cc, count, v);
+				count++;
+			}
+		}
+		Set<Integer> components = new HashSet<>(Arrays.asList(cc));
+
+		for (var component: components ) {
+			if (component != -1)
+			{
+				System.out.println("Componente: #" + component);
+				var subGraphNodes = new ArrayList<Integer>();
+				var matrix = new Float[adjacentMatrix.length][adjacentMatrix.length];
+				//TODO MELHORAR A PERFOMANCE REUTILIZANDO A MEMORIaa
+
+				for (int i=0; i < matrix.length; i++)
+				{
+					Arrays.fill(matrix[i], 0f);
+				}
+				
+				for (int i = 0; i < cc.length; i++) {
+					if (cc[i].equals(component)) {
+						subGraphNodes.add(i);
+					}
+				}
+
+				for (var node: subGraphNodes) {
+					matrix[node] = adjacentMatrix[node];
+				}
+				var t = 0;
+				System.out.println("Número de vértices: " + subGraphNodes.size());
+				for (int i = 0; i < matrix.length; i++) {
+					t++;
+					for (int j = 0; j <= i; j++) {
+						if(matrix[i][j] != 0)
+						{
+							System.out.println(String.format("Vertice %d- Vertice %d - Peso %f", i+1, j+1, matrix[i][j]));
+						}
+					}
+				}
+			}
+		}
+		return "";
+	}
+
+	private void dfsRcc(Integer[] cc, int count, int v)
+	{
+		Stack<Integer> stack = new Stack<>();
+		stack.push(v);
+		while (!stack.isEmpty()) {
+			int current = stack.pop();
+			cc[current] = count;
+			for (int i = 0; i < this.adjacentMatrix[current].length; i++) {
+				if (cc[i] == -1 && this.adjacentMatrix[current][i] != 0) {
+					stack.push(i);
+				}
+			}
+		}
+	}
+
+	private void dfs(int node, int level, StringBuilder tree, boolean[] visited) {
+
+		visited[node] = true;
 		int numVertices = adjacentMatrix.length;
 
 		String log = String.format("NODE: %d - LEVEL: %d\n", node+1, level);
 		tree.append(log);
 		level += 1;
 		for (int i = 0; i < numVertices; i++) {
-			if (adjacentMatrix[node][i] != 0 && !this.visited[i])
+			if (adjacentMatrix[node][i] != 0 && !visited[i])
 			{
-				this.dfs(i, level, tree);
+				this.dfs(i, level, tree, visited);
 			}
 		}
 	}
 
-	private void bfs(int root, StringBuilder tree)
+	private void bfs(int root, StringBuilder tree, boolean[] visited)
 	{
 		Queue<Integer> queue = new LinkedList<>();
 		queue.add(root);
@@ -141,5 +208,7 @@ public class AdjacentMatrix implements IGraphRepresentation {
 	public int getNumberOfEdges() {
 		return this.edges.size();
 	}
+
+
 
 }

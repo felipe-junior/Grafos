@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		var filepath = "src/graph_with_weight.txt";
+		var filepath = "src/grafo_4.txt";
 		var sc = new Scanner(System.in);
 
 		System.out.println("Qual representação do Grafo utilizar ?");
@@ -33,6 +33,7 @@ public class Main {
 
 		graphManager.buildGraphFromFile(filepath);
 		graphManager.generateTree();
+		graphManager.ShowConnectComponents();
 //		graphManager.generateGraphOutput("src/output.txt");
 	}
 

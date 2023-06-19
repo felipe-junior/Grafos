@@ -38,10 +38,13 @@ public class GraphManager {
 				var weight = values.length == 3 ? Float.parseFloat(values[2]) : null;
 
 				edges.add(new Edge(nodeA, nodeB, weight));
-				System.out.println(String.format("%d %d %s", nodeA, nodeB, (weight == null ? "" : weight.toString())));
+//				System.out.println(String.format("%d %d %s", nodeA, nodeB, (weight == null ? "" : weight.toString())));
 			}
 			this.graph.initialize(numberOfVertex, edges);
 			System.out.println("End of file reading");
+		} catch (Exception ex)
+		{
+			System.out.println(ex.toString());
 		}
 	}
 
@@ -65,6 +68,11 @@ public class GraphManager {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void ShowConnectComponents()
+	{
+		graph.FindAndShowConnectedComponents();
 	}
 
 
