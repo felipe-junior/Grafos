@@ -2,7 +2,10 @@ package graph.representation;
 
 import graph.Edge;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AdjacentList implements IGraphRepresentation {
 
@@ -119,7 +122,7 @@ public class AdjacentList implements IGraphRepresentation {
 		}
 	}
 	@Override
-	public List<List<Integer>> generateConnectedComponents() {
+	public void findAndShowConnectedComponents(String outputGraphDirectory) {
 		List<List<Integer>> connectedComponents = new ArrayList<>();
 		boolean[] visited = new boolean[adjacentList.size()];
 
@@ -131,7 +134,33 @@ public class AdjacentList implements IGraphRepresentation {
 			}
 		}
 
-		return connectedComponents;
+		// Ordenar as componentes conexos em ordem decrescente de tamanho
+		connectedComponents.sort((a, b) -> b.size() - a.size());
+
+		var  filePath = outputGraphDirectory + this.getClass().getSimpleName() + "-connectedComponents.txt";
+		try {
+			FileWriter myWriter = new FileWriter(filePath);
+			myWriter.write("Número de componentes conexos: " + connectedComponents.size() +"\n\n");
+
+			for (int i = 0; i < connectedComponents.size(); i++) {
+				myWriter.write("Componente: #" + (i+1) +"\n");
+
+				var component = connectedComponents.get(i)
+						.stream().collect(Collectors.toSet());
+
+				// Imprimir o tamanho do componente
+				myWriter.write("Tamanho do componente " + (i + 1) + ": " + component.size() +"\n");
+
+				// Imprimir os vértices pertencentes ao componente
+				myWriter.write("Vértices do componente " + (i + 1) + ": " + component +"\n\n");
+			}
+
+			myWriter.close();
+			System.out.println("Successfully wrote to the file.");
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
 	}
 
 	private void dfs(int startNode, boolean[] visited, int level, List<Integer> connectedComponent) {
@@ -169,11 +198,6 @@ public class AdjacentList implements IGraphRepresentation {
 			}
 		}
 		return -1;
-	}
-
-	@Override
-	public String FindAndShowConnectedComponents() {
-		return null;
 	}
 
 	@Override

@@ -1,35 +1,39 @@
 package graph;
 
+import graph.enums.SearchType;
 import graph.representation.IGraphRepresentation;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
-import static graph.enums.SearchType.BFS;
 import static graph.enums.SearchType.DFS;
 
 
 public class GraphManager {
 	private final IGraphRepresentation graph;
+	private final String inputGraphFilePath;
+	private final String outputGraphDirectory;
 
-	public GraphManager(IGraphRepresentation graph) {
+	public GraphManager(IGraphRepresentation graph, String inputGraphFilePath, String outputGraphDirectory) {
 		this.graph = graph;
+		this.inputGraphFilePath = inputGraphFilePath;
+		this.outputGraphDirectory = outputGraphDirectory;
+		this.buildGraphFromFile();
 	}
 
-	public void buildGraphFromFile(String path) {
+	public void buildGraphFromFile() {
 		try {
-			this.convertFileToGraph(path);
+			this.convertFileToGraph();
 		} catch (IOException e) {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
 	}
 
-	private void convertFileToGraph(String path) throws IOException {
+	private void convertFileToGraph() throws IOException {
 		System.out.println("Reading file");
 
-		try(var reader = new BufferedReader(new FileReader(path))) {
+		try(var reader = new BufferedReader(new FileReader(this.inputGraphFilePath))) {
 			String line = reader.readLine();
 			var numberOfVertex = Integer.parseInt(line);
 			var edges = new ArrayList<Edge>();
@@ -46,24 +50,22 @@ public class GraphManager {
 			}
 			this.graph.initialize(numberOfVertex, edges);
 			System.out.println("End of file reading");
-		} catch (Exception ex)
-		{
-			System.out.println(ex.toString());
+		} catch (Exception exception) {
+			exception.printStackTrace();
 		}
 	}
 
-	public void generateTree() {
-		var searchMethod = BFS.getType();
+	public void generateTree(SearchType searchMethod) {
 		String tree;
-		if(searchMethod == DFS.getType()) {
+		if(searchMethod.getType() == DFS.getType()) {
 			tree = graph.getDfsTree();
 		} else {
 			tree = graph.getBfsTree();
 		}
 
-		var  filename = graph.getClass().getName()+ (searchMethod == DFS.getType() ? "-dfs-":"-bfs-")  + "node-levels.txt";
+		var  filename = graph.getClass().getSimpleName() + (searchMethod.getType() == DFS.getType() ? "-dfs-":"-bfs-")  + "node-levels.txt";
 		try {
-			FileWriter myWriter = new FileWriter("src/files/output/graph/" + filename);
+			FileWriter myWriter = new FileWriter(this.outputGraphDirectory + filename);
 			myWriter.write(tree);
 			myWriter.close();
 			System.out.println("Successfully wrote to the file.");
@@ -74,18 +76,17 @@ public class GraphManager {
 
 	}
 
-	public void ShowConnectComponents()
+	public void showConnectComponents()
 	{
-		graph.FindAndShowConnectedComponents();
+		graph.findAndShowConnectedComponents(this.outputGraphDirectory);
 	}
 
-
-	public void generateGraphOutput(String filePath) {
+	public void generateGraphOutput() {
 		var n = graph.getNumberOfNodes();
 		var m = graph.getNumberOfEdges();
 		var d = this.calculateAverageDegree();
 
-		try(var writer = new BufferedWriter(new FileWriter(filePath))){
+		try(var writer = new BufferedWriter(new FileWriter(this.outputGraphDirectory + graph.getClass().getSimpleName() + "-output.txt"))){
 			writer.write(String.format("# n = %s\n", n));
 			writer.write(String.format("# m = %s\n", m));
 			writer.write(String.format("# d = %s\n", d));
@@ -107,27 +108,5 @@ public class GraphManager {
 			degreeCount += this.graph.getNodeDegree(node);
 		}
 		return (float) degreeCount / this.graph.getNumberOfNodes();
-	}
-
-	public void generateConnectedComponents(){
-		List<List<Integer>> connectedComponents = graph.generateConnectedComponents();
-
-		// Ordenar as componentes conexos em ordem decrescente de tamanho
-		connectedComponents.sort((a, b) -> b.size() - a.size());
-
-		// Imprimir o número de componentes conexos
-		System.out.println("Número de componentes conexos: " + connectedComponents.size());
-
-		// Imprimir informações de cada componente conexo
-		for (int i = 0; i < connectedComponents.size(); i++) {
-			List<Integer> component = connectedComponents.get(i);
-
-			// Imprimir o tamanho do componente
-			System.out.println("Tamanho do componente " + (i + 1) + ": " + component.size());
-
-			// Imprimir os vértices pertencentes ao componente
-			System.out.println("Vértices do componente " + (i + 1) + ": " + component);
-			System.out.println();
-		}
 	}
 }

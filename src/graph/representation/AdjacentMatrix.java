@@ -2,7 +2,10 @@ package graph.representation;
 
 import graph.Edge;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AdjacentMatrix implements IGraphRepresentation {
 
@@ -44,7 +47,7 @@ public class AdjacentMatrix implements IGraphRepresentation {
 	}
 
 	@Override
-	public String FindAndShowConnectedComponents() {
+	public void findAndShowConnectedComponents(String outputGraphDirectory) {
 		// Cria um array de inteiros com o tamanho do número de vértices do grafo G
 		Integer[] cc = new Integer[adjacentMatrix.length];
 		// Inicializa todos os elementos do array com -1
@@ -60,43 +63,50 @@ public class AdjacentMatrix implements IGraphRepresentation {
 			}
 		}
 		Set<Integer> components = new HashSet<>(Arrays.asList(cc));
+		components = components.stream()
+				.filter(component -> component != -1)
+		.collect(Collectors.toSet());
 
-		for (var component: components ) {
-			if (component != -1)
-			{
-				System.out.println("Componente: #" + component);
-				var subGraphNodes = new ArrayList<Integer>();
-				var matrix = new Float[adjacentMatrix.length][adjacentMatrix.length];
-				//TODO MELHORAR A PERFOMANCE REUTILIZANDO A MEMORIaa
+		var  filePath = outputGraphDirectory  + this.getClass().getSimpleName() +  "-connectedComponents.txt";
+		try {
+			FileWriter myWriter = new FileWriter(filePath);
+			myWriter.write("Número de componentes conexos: " + components.size() +"\n\n");
 
-				for (int i=0; i < matrix.length; i++)
-				{
-					Arrays.fill(matrix[i], 0f);
-				}
+			for (var component: components ) {
+				if (component != -1) {
+					myWriter.write("Componente: #" + (component+1) + "\n");
 
-				for (int i = 0; i < cc.length; i++) {
-					if (cc[i].equals(component)) {
-						subGraphNodes.add(i);
+					var subGraphNodes = new ArrayList<Integer>();
+					var matrix = new Float[adjacentMatrix.length][adjacentMatrix.length];
+					//TODO MELHORAR A PERFOMANCE REUTILIZANDO A MEMORIaa
+
+					for (int i=0; i < matrix.length; i++)
+					{
+						Arrays.fill(matrix[i], 0f);
 					}
-				}
 
-				for (var node: subGraphNodes) {
-					matrix[node] = adjacentMatrix[node];
-				}
-				var t = 0;
-				System.out.println("Número de vértices: " + subGraphNodes.size());
-				for (int i = 0; i < matrix.length; i++) {
-					t++;
-					for (int j = 0; j <= i; j++) {
-						if(matrix[i][j] != 0)
-						{
-							System.out.println(String.format("Vertice %d- Vertice %d - Peso %f", i+1, j+1, matrix[i][j]));
+					for (int i = 0; i < cc.length; i++) {
+						if (cc[i].equals(component)) {
+							subGraphNodes.add(i);
 						}
 					}
+
+					for (var node: subGraphNodes) {
+						matrix[node] = adjacentMatrix[node];
+					}
+
+					myWriter.write( String.format("Tamanho do componente %d: %d\n", component + 1, subGraphNodes.size()));
+					myWriter.write( String.format("Vértices do componente %d: %s\n\n",
+							component + 1, subGraphNodes.stream().map(node -> node + 1).collect(Collectors.toSet())));
 				}
 			}
+			myWriter.close();
+			System.out.println("Successfully wrote to the file.");
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
 		}
-		return "";
+
 	}
 
 	private void dfsRcc(Integer[] cc, int count, int v)
@@ -207,12 +217,5 @@ public class AdjacentMatrix implements IGraphRepresentation {
 	@Override
 	public int getNumberOfEdges() {
 		return this.edges.size();
-	}
-
-
-
-	@Override
-	public List<List<Integer>> generateConnectedComponents() {
-		return null;
 	}
 }
