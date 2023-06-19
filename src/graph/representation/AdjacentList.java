@@ -28,11 +28,6 @@ public class AdjacentList implements IGraphRepresentation {
 	}
 
 	@Override
-	public String getTree(){
-		throw new RuntimeException("ALDALWDLAWd");
-	}
-
-	@Override
 	public void addEdge(Edge edge) {
 		var nodeA = edge.getNodeA() - 1;
 		var nodeB = edge.getNodeB() - 1;
@@ -72,6 +67,16 @@ public class AdjacentList implements IGraphRepresentation {
 			}
 		}
 		return maxDegree;
+	}
+
+	@Override
+	public String getDfsTree() {
+		return null;
+	}
+
+	@Override
+	public String getBfsTree() {
+		return null;
 	}
 
 	@Override

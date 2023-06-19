@@ -46,8 +46,15 @@ public class GraphManager {
 	}
 
 	public void generateTree() throws IOException {
-		var tree = graph.getTree();
-		var  filename = graph.getClass().getName() + "-node-levels.txt";
+		var searchMethod = 2; //TODO Fazer um enum para dfs e bfs. 1 para dfs 2 para bfs
+		String tree;
+		if(searchMethod == 1)
+		{
+			tree = graph.getDfsTree();
+		} else {
+			tree = graph.getBfsTree();
+		}
+		var  filename = graph.getClass().getName()+ (searchMethod == 1 ? "-dfs-":"-bfs-")  + "node-levels.txt";
 		try {
 			FileWriter myWriter = new FileWriter(filename);
 			myWriter.write(tree);

@@ -19,7 +19,7 @@ public class Main {
 		System.out.print("Escolha uma opção: ");
 		var graphRepresentationInput = Integer.parseInt(sc.nextLine());
 		var graphType = EGraphRepresentation.getValue(graphRepresentationInput);
-		//Será necessário passar o caminho do arquivo
+		//TODO Será necessário passar o caminho do arquivo
 		GraphManager graphManager = null;
 
 		switch (graphType){

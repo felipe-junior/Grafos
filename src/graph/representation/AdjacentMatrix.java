@@ -3,7 +3,9 @@ package graph.representation;
 import graph.Edge;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class AdjacentMatrix implements IGraphRepresentation {
 
@@ -28,11 +30,20 @@ public class AdjacentMatrix implements IGraphRepresentation {
 	}
 
 	@Override
-	public String getTree(){
+	public String getDfsTree(){
 		StringBuilder tree = new StringBuilder();
 		visited = new boolean[adjacentMatrix.length];
 		int root = 0;
 		dfs(root, 0, tree);
+		return tree.toString();
+	}
+
+	@Override
+	public String getBfsTree(){
+		StringBuilder tree = new StringBuilder();
+		visited = new boolean[adjacentMatrix.length];
+		int root = 0;
+		bfs(root, tree);
 		return tree.toString();
 	}
 
@@ -51,6 +62,33 @@ public class AdjacentMatrix implements IGraphRepresentation {
 			}
 		}
 	}
+
+	private void bfs(int root, StringBuilder tree)
+	{
+		Queue<Integer> queue = new LinkedList<>();
+		queue.add(root);
+		String logRoot = String.format("NODE: %d - LEVEL: %d\n", root+1, 0);
+		var levels = new Integer[adjacentMatrix.length];
+		Arrays.fill(levels, -1);
+		levels[root] = 0;
+		tree.append(logRoot);
+		while (!queue.isEmpty()){
+			var node = queue.poll();
+			visited[node] = true;
+			for (int i = 0; i < adjacentMatrix.length; i++) {
+				if (adjacentMatrix[node][i] != 0 && !visited[i])
+				{
+					queue.add(i);
+					if(levels[i] == -1)
+					{
+						levels[i] = levels[node] + 1;
+						tree.append(String.format("NODE: %d - LEVEL: %d\n", i + 1, levels[i]));
+					}
+				}
+			}
+		}
+	}
+
 
 	@Override
 	public void addEdge(Edge edge) {

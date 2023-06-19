@@ -13,5 +13,6 @@ public interface IGraphRepresentation {
 	public int getNodeDegree(int node);
 	public int getNumberOfNodesByDegree(int degree);
 	public int getMaximumDegree();
-	public String getTree();
+	public String getDfsTree();
+	public String getBfsTree();
 }
