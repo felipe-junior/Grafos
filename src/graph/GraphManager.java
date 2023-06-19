@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 
 public class GraphManager {
-	private IGraphRepresentation graph;
+	private final IGraphRepresentation graph;
 
 	public GraphManager(IGraphRepresentation graph) {
 		this.graph = graph;
@@ -46,7 +46,18 @@ public class GraphManager {
 	}
 
 	public void generateTree() throws IOException {
-		System.out.println(graph.getTree());
+		var tree = graph.getTree();
+		var  filename = graph.getClass().getName() + "-node-levels.txt";
+		try {
+			FileWriter myWriter = new FileWriter(filename);
+			myWriter.write(tree);
+			myWriter.close();
+			System.out.println("Successfully wrote to the file.");
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+
 	}
 
 

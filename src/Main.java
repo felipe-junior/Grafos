@@ -19,7 +19,7 @@ public class Main {
 		System.out.print("Escolha uma opção: ");
 		var graphRepresentationInput = Integer.parseInt(sc.nextLine());
 		var graphType = EGraphRepresentation.getValue(graphRepresentationInput);
-		
+		//Será necessário passar o caminho do arquivo
 		GraphManager graphManager = null;
 
 		switch (graphType){
@@ -33,7 +33,7 @@ public class Main {
 
 		graphManager.buildGraphFromFile(filepath);
 		graphManager.generateTree();
-		graphManager.generateGraphOutput("src/output.txt");
+//		graphManager.generateGraphOutput("src/output.txt");
 	}
 
 }

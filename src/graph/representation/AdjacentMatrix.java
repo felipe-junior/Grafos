@@ -2,15 +2,14 @@ package graph.representation;
 
 import graph.Edge;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class AdjacentMatrix implements IGraphRepresentation {
 
 	private Float[][] adjacentMatrix;
 	private List<Edge> edges;
+	private boolean[] visited;
 	private boolean hasWeight;
 
 	public AdjacentMatrix() { }
@@ -25,43 +24,32 @@ public class AdjacentMatrix implements IGraphRepresentation {
 		for (var edge : this.edges) {
 			this.addEdge(edge);
 		}
-
 		this.hasWeight = edges.get(0).getWheight() != null;
 	}
 
 	@Override
 	public String getTree(){
-		return breadthFirstSearch(adjacentMatrix, 0, 0);
+		StringBuilder tree = new StringBuilder();
+		visited = new boolean[adjacentMatrix.length];
+		int root = 0;
+		dfs(root, 0, tree);
+		return tree.toString();
 	}
 
-	private static String breadthFirstSearch(Float[][] matriz, int vertice, int nivel) {
-		StringBuilder arvore = new StringBuilder();
-		arvore.append(getIndentation(nivel));
-		arvore.append(vertice);
-		arvore.append("\n");
+	private void dfs(int node, int level, StringBuilder tree) {
 
-		int numVertices = matriz.length;
+		this.visited[node] = true;
+		int numVertices = adjacentMatrix.length;
 
+		String log = String.format("NODE: %d - LEVEL: %d\n", node+1, level);
+		tree.append(log);
+		level += 1;
 		for (int i = 0; i < numVertices; i++) {
-			if (matriz[vertice][i] != 0) {
-				arvore.append(getIndentation(nivel + 1));
-				arvore.append("├── ");
-				arvore.append(breadthFirstSearch(matriz, i, nivel + 1));
+			if (adjacentMatrix[node][i] != 0 && !this.visited[i])
+			{
+				this.dfs(i, level, tree);
 			}
 		}
-
-		return arvore.toString();
-	}
-
-	private static String getIndentation(int level) {
-		StringBuilder indentation = new StringBuilder();
-		for (int i = 0; i < level; i++) {
-			indentation.append("│   ");
-		}
-		if (level > 0) {
-			indentation.append("└── ");
-		}
-		return indentation.toString();
 	}
 
 	@Override
