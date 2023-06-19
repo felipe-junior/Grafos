@@ -172,6 +172,11 @@ public class AdjacentList implements IGraphRepresentation {
 	}
 
 	@Override
+	public String FindAndShowConnectedComponents() {
+		return null;
+	}
+
+	@Override
 	public int getNumberOfEdges() {
 		return this.edges.size();
 	}

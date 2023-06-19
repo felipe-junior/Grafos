@@ -34,7 +34,9 @@ public class Main {
 		graphManager.buildGraphFromFile(filepath);
 		graphManager.generateTree();
 		graphManager.generateConnectedComponents();
+		graphManager.ShowConnectComponents();
 		graphManager.generateGraphOutput("src/output.txt");
+//		graphManager.generateGraphOutput("src/output.txt");
 	}
 
 }
