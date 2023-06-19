@@ -1,4 +1,4 @@
-import graph.EGraphRepresentation;
+import graph.enums.EGraphRepresentation;
 import graph.GraphManager;
 import graph.representation.AdjacentList;
 import graph.representation.AdjacentMatrix;
@@ -8,8 +8,8 @@ import java.util.Scanner;
 
 public class Main {
 
-	public static void main(String[] args) throws IOException {
-		var filepath = "src/graph_with_weight.txt";
+	public static void main(String[] args) {
+		var filepath = "src/files/input/grafo_1.txt";
 		var sc = new Scanner(System.in);
 
 		System.out.println("Qual representação do Grafo utilizar ?");
@@ -33,7 +33,8 @@ public class Main {
 
 		graphManager.buildGraphFromFile(filepath);
 		graphManager.generateTree();
-//		graphManager.generateGraphOutput("src/output.txt");
+		graphManager.generateConnectedComponents();
+		graphManager.generateGraphOutput("src/output.txt");
 	}
 
 }

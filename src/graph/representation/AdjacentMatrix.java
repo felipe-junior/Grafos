@@ -2,10 +2,7 @@ package graph.representation;
 
 import graph.Edge;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class AdjacentMatrix implements IGraphRepresentation {
 
@@ -142,4 +139,8 @@ public class AdjacentMatrix implements IGraphRepresentation {
 		return this.edges.size();
 	}
 
+	@Override
+	public List<List<Integer>> generateConnectedComponents() {
+		return null;
+	}
 }

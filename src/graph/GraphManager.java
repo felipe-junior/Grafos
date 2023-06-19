@@ -4,6 +4,10 @@ import graph.representation.IGraphRepresentation;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
+
+import static graph.enums.SearchType.BFS;
+import static graph.enums.SearchType.DFS;
 
 
 public class GraphManager {
@@ -45,18 +49,18 @@ public class GraphManager {
 		}
 	}
 
-	public void generateTree() throws IOException {
-		var searchMethod = 2; //TODO Fazer um enum para dfs e bfs. 1 para dfs 2 para bfs
+	public void generateTree() {
+		var searchMethod = BFS.getType();
 		String tree;
-		if(searchMethod == 1)
-		{
+		if(searchMethod == DFS.getType()) {
 			tree = graph.getDfsTree();
 		} else {
 			tree = graph.getBfsTree();
 		}
-		var  filename = graph.getClass().getName()+ (searchMethod == 1 ? "-dfs-":"-bfs-")  + "node-levels.txt";
+
+		var  filename = graph.getClass().getName()+ (searchMethod == DFS.getType() ? "-dfs-":"-bfs-")  + "node-levels.txt";
 		try {
-			FileWriter myWriter = new FileWriter(filename);
+			FileWriter myWriter = new FileWriter("src/files/output/graph/" + filename);
 			myWriter.write(tree);
 			myWriter.close();
 			System.out.println("Successfully wrote to the file.");
@@ -66,7 +70,6 @@ public class GraphManager {
 		}
 
 	}
-
 
 	public void generateGraphOutput(String filePath) {
 		var n = graph.getNumberOfNodes();
@@ -97,4 +100,25 @@ public class GraphManager {
 		return (float) degreeCount / this.graph.getNumberOfNodes();
 	}
 
+	public void generateConnectedComponents(){
+		List<List<Integer>> connectedComponents = graph.generateConnectedComponents();
+
+		// Ordenar as componentes conexos em ordem decrescente de tamanho
+		connectedComponents.sort((a, b) -> b.size() - a.size());
+
+		// Imprimir o número de componentes conexos
+		System.out.println("Número de componentes conexos: " + connectedComponents.size());
+
+		// Imprimir informações de cada componente conexo
+		for (int i = 0; i < connectedComponents.size(); i++) {
+			List<Integer> component = connectedComponents.get(i);
+
+			// Imprimir o tamanho do componente
+			System.out.println("Tamanho do componente " + (i + 1) + ": " + component.size());
+
+			// Imprimir os vértices pertencentes ao componente
+			System.out.println("Vértices do componente " + (i + 1) + ": " + component);
+			System.out.println();
+		}
+	}
 }

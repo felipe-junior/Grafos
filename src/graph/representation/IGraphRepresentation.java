@@ -15,4 +15,5 @@ public interface IGraphRepresentation {
 	public int getMaximumDegree();
 	public String getDfsTree();
 	public String getBfsTree();
+	public List<List<Integer>> generateConnectedComponents();
 }

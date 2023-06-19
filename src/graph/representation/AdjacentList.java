@@ -2,9 +2,7 @@ package graph.representation;
 
 import graph.Edge;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class AdjacentList implements IGraphRepresentation {
 
@@ -71,12 +69,106 @@ public class AdjacentList implements IGraphRepresentation {
 
 	@Override
 	public String getDfsTree() {
-		return null;
+		StringBuilder tree = new StringBuilder();
+		var visited = new boolean[adjacentList.size()];
+		int root = 0;
+		dfs(root, tree, visited, 0);
+		return tree.toString();
 	}
 
 	@Override
 	public String getBfsTree() {
-		return null;
+		StringBuilder tree = new StringBuilder();
+		var visited = new boolean[adjacentList.size()];
+		int root = 0;
+		bfs(root, tree, visited);
+		return tree.toString();
+	}
+
+	public void bfs(int startNode, StringBuilder tree, boolean[] visited) {
+		Queue<Integer> queue = new LinkedList<>();
+		visited[startNode] = true;
+		queue.offer(startNode);
+
+		while (!queue.isEmpty()) {
+			int currentNode = queue.poll();
+			int level = getLevel(currentNode, startNode);
+			String log = String.format("NODE: %d - LEVEL: %d\n", currentNode + 1, level);
+			tree.append(log);
+
+			LinkedList<Integer> neighbors = adjacentList.get(currentNode);
+			for (int neighbor : neighbors) {
+				if (!visited[neighbor]) {
+					visited[neighbor] = true;
+					queue.offer(neighbor);
+				}
+			}
+		}
+	}
+
+	private void dfs(int startNode, StringBuilder tree, boolean[] visited, int level) {
+		visited[startNode] = true;
+		String log = String.format("NODE: %d - LEVEL: %d\n", startNode + 1, level);
+		tree.append(log);
+
+		LinkedList<Integer> neighbors = adjacentList.get(startNode);
+		for (int neighbor : neighbors) {
+			if (!visited[neighbor]) {
+				dfs(neighbor, tree, visited, level + 1);
+			}
+		}
+	}
+	@Override
+	public List<List<Integer>> generateConnectedComponents() {
+		List<List<Integer>> connectedComponents = new ArrayList<>();
+		boolean[] visited = new boolean[adjacentList.size()];
+
+		for (int node = 0; node < adjacentList.size(); node++) {
+			if (!visited[node]) {
+				List<Integer> connectedComponent = new ArrayList<>();
+				dfs(node, visited, 0, connectedComponent);
+				connectedComponents.add(connectedComponent);
+			}
+		}
+
+		return connectedComponents;
+	}
+
+	private void dfs(int startNode, boolean[] visited, int level, List<Integer> connectedComponent) {
+		Stack<Integer> stack = new Stack<>();
+		stack.push(startNode);
+
+		while (!stack.isEmpty()) {
+			int currentNode = stack.pop();
+			visited[currentNode] = true;
+			connectedComponent.add(currentNode + 1); // Adiciona o nó atual à componente conexa
+
+			LinkedList<Integer> neighbors = adjacentList.get(currentNode);
+			for (int neighbor : neighbors) {
+				if (!visited[neighbor]) {
+					stack.push(neighbor);
+				}
+			}
+		}
+	}
+
+	private int getLevel(int node, int startNode) {
+		int level = 0;
+		int currentNode = node;
+		while (currentNode != startNode) {
+			currentNode = getParent(currentNode);
+			level++;
+		}
+		return level;
+	}
+
+	private int getParent(int node) {
+		for (int i = 0; i < adjacentList.size(); i++) {
+			if (adjacentList.get(i).contains(node)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	@Override
