@@ -219,12 +219,90 @@ public class AdjacentMatrix implements IGraphRepresentation {
 		return this.edges.size();
 	}
 
+	class Path implements Comparable<Path>
+	{
+		Path predecessor;
+		float cost;
 
+		int id;
+
+		Path(Path _predecessor, float _cost, int _id)
+		{
+			this.predecessor = _predecessor;
+			this.cost = _cost;
+			this.id = _id;
+		}
+
+		@Override
+		public int compareTo(Path other) {
+			return Float.compare(cost, other.cost);
+		}
+	}
 
 	@Override
-	public List<Integer> calculateShortestPath(int startNode, int endNode) {
+	public List<Integer> calculateShortestPath(int vertexA, int vertexB)
+	{
+		var paths = new Path[adjacentMatrix.length];
+		for (int i = 0; i < adjacentMatrix.length; i++) {
+			paths[i] = new Path(null, Integer.MAX_VALUE, vertexA);
+		}
+
+		paths[vertexA] = new Path(null, 0, vertexA);
+
+		Set<Integer> visited = new HashSet<Integer>();
+		PriorityQueue<Path> queue = new PriorityQueue<>(adjacentMatrix.length);
+		queue.add(paths[vertexA]);
+		Path currentPath = null;
+		while (!queue.isEmpty() && !visited.remove(vertexB))
+		{
+			currentPath = queue.poll();
+			visited.add(currentPath.id);
+
+			for (int i = 0; i < adjacentMatrix.length; i++)
+			{
+				int finalI = i;
+				var isNotVisited = visited.stream().noneMatch(x -> x == finalI);
+
+				//Encontra os vizinhos e faz o relaxamento
+				if (adjacentMatrix[currentPath.id][i] != 0 && adjacentMatrix[currentPath.id][i] != null && isNotVisited)
+				{
+					var cost = adjacentMatrix[currentPath.id][i];
+					var totalCost = cost + paths[currentPath.id].cost;
+					if(paths[i].cost > totalCost)
+					{
+						paths[i].id = i;
+						paths[i].cost = totalCost;
+						paths[i].predecessor = currentPath;
+					}
+
+					if(isNotVisited)
+						queue.add(paths[i]);
+				}
+			}
+
+		}
+		StringBuilder sb = new StringBuilder();
+		if(currentPath!=null)
+		{
+			var shortPath = currentPath;
+			List<Integer> results = new ArrayList<>();
+			while (shortPath!= null)
+			{
+				results.add(shortPath.id);
+				shortPath = shortPath.predecessor;
+			}
+			Collections.reverse(results);
+
+			for (var result: results) {
+				sb.append(result+1).append(" -> ");
+			}
+
+		}
+		System.out.println(sb);
+		System.out.println("Custo: " + currentPath.cost);
 		return null;
 	}
+
 
 	@Override
 	public float calculateEdgeWeight(int nodeA, int nodeB) {

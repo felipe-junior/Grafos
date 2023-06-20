@@ -121,18 +121,20 @@ public class GraphManager {
 		}
 	}
 
-	public List<List<Integer>> calculateShortestPathFromNode(int startNode) {
+	public List<List<Integer>> calculateShortestPathFromNode(int startNode, int endNode) {
+
+		graph.calculateShortestPath(startNode, endNode);
 		List<List<Integer>> shortestPaths = new ArrayList<>();
 
-		for (int endNode = 0; endNode < graph.getNumberOfNodes(); endNode++) {
-			if (startNode != endNode) {
-				List<Integer> shortestPath = graph.calculateShortestPath(startNode, endNode);
-				shortestPaths.add(shortestPath);
-			} else {
-				shortestPaths.add(new ArrayList<>(List.of(startNode)));
-			}
-		}
-
+//		for (int endNode = 0; endNode < graph.getNumberOfNodes(); endNode++) {
+//			if (startNode != endNode) {
+//				List<Integer> shortestPath = graph.calculateShortestPath(startNode, endNode);
+//				shortestPaths.add(shortestPath);
+//			} else {
+//				shortestPaths.add(new ArrayList<>(List.of(startNode)));
+//			}
+//		}
+//
 		return shortestPaths;
 	}
 
@@ -147,19 +149,19 @@ public class GraphManager {
 		}
 	}
 
-	public void showShortestPathFromNode(int startNode){
-		List<List<Integer>> shortestPaths = calculateShortestPathFromNode(startNode);
+	public void showShortestPathFromNode(int startNode, int endNode){
+		List<List<Integer>> shortestPaths = calculateShortestPathFromNode(startNode, endNode);
 
 		// Imprime a distância e o caminho mínimo entre o vértice de partida e todos os outros vértices
-		for (int endNode = 0; endNode < shortestPaths.size(); endNode++) {
-			if (endNode != startNode) {
-				List<Integer> shortestPath = shortestPaths.get(endNode);
-				int distance = shortestPath.size() - 1; // A distância é o número de arestas no caminho mínimo
-				System.out.println("Distância entre " + startNode + " e " + endNode + ": " + distance);
-				System.out.println("Caminho mínimo: " + shortestPath);
-				System.out.println();
-			}
-		}
+//		for (int endNode = 0; endNode < shortestPaths.size(); endNode++) {
+//			if (endNode != startNode) {
+//				List<Integer> shortestPath = shortestPaths.get(endNode);
+//				int distance = shortestPath.size() - 1; // A distância é o número de arestas no caminho mínimo
+//				System.out.println("Distância entre " + startNode + " e " + endNode + ": " + distance);
+//				System.out.println("Caminho mínimo: " + shortestPath);
+//				System.out.println();
+//			}
+//		}
 	}
 
 	private float calculatePathWeight(List<Integer> path) {

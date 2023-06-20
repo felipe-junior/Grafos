@@ -35,7 +35,6 @@ public class Main {
 		}
 
 		GraphManager graphManager = updateGraphRepresentation(inputGraphFilePath, outputGraphDirectory);;
-
 		int menuOption = 0;
 
 		do {
@@ -85,13 +84,13 @@ public class Main {
 						break;
 					case 6:
 						System.out.println("Digite o vertice inicial: ");
-						var startNode = scanner.nextInt();
+						var startNode = scanner.nextInt() - 1;
 
 						System.out.println("Digite o vertice final: ");
-						var endNode = scanner.nextInt();
-
-						graphManager.showDistanceOfNodes(startNode, endNode);
-						graphManager.showShortestPathFromNode(startNode);
+						var endNode = scanner.nextInt() - 1;
+						graphManager.calculateShortestPathFromNode(startNode, endNode);
+//						graphManager.showDistanceOfNodes(startNode, endNode);
+//						graphManager.showShortestPathFromNode(startNode);
 						System.out.println("Resultados de distância e caminho mínimo gerados com sucesso!");
 						break;
 					case 7:
