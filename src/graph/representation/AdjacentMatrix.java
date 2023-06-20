@@ -25,7 +25,7 @@ public class AdjacentMatrix implements IGraphRepresentation {
 		for (var edge : this.edges) {
 			this.addEdge(edge);
 		}
-		this.hasWeight = edges.get(0).getWheight() != null;
+		this.hasWeight = edges.get(0).getWeight() != null;
 	}
 
 	@Override
@@ -172,8 +172,8 @@ public class AdjacentMatrix implements IGraphRepresentation {
 		var nodeA = edge.getNodeA() - 1;
 		var nodeB = edge.getNodeB() - 1;
 
-		adjacentMatrix[nodeA][nodeB] = edge.getWheight() != null ? edge.getWheight() : 1f;
-		adjacentMatrix[nodeB][nodeA] =  edge.getWheight() != null ? edge.getWheight() : 1f;
+		adjacentMatrix[nodeA][nodeB] = edge.getWeight() != null ? edge.getWeight() : 1f;
+		adjacentMatrix[nodeB][nodeA] =  edge.getWeight() != null ? edge.getWeight() : 1f;
 	}
 
 	@Override
@@ -217,5 +217,97 @@ public class AdjacentMatrix implements IGraphRepresentation {
 	@Override
 	public int getNumberOfEdges() {
 		return this.edges.size();
+	}
+
+
+
+	@Override
+	public List<Integer> calculateShortestPath(int startNode, int endNode) {
+		return null;
+	}
+
+	@Override
+	public float calculateEdgeWeight(int nodeA, int nodeB) {
+		return 0;
+	}
+
+	@Override
+	public List<Edge> findMinimumSpanningTree() {
+		List<Edge> mst = new ArrayList<>();
+
+		// Ordena as arestas pelo peso em ordem crescente
+		List<Edge> sortedEdges = new ArrayList<>(edges);
+		sortedEdges.sort(Comparator.comparingDouble(Edge::getWeight));
+
+		int[] parent = new int[adjacentMatrix.length];
+		Arrays.fill(parent, -1);
+
+		int numEdgesAdded = 0;
+		int numNodes = adjacentMatrix.length - 1;
+
+		for (Edge edge : sortedEdges) {
+			int rootA = find(parent, edge.getNodeA() - 1);
+			int rootB = find(parent, edge.getNodeB() - 1);
+
+			if (rootA != rootB) {
+				mst.add(edge);
+				numEdgesAdded++;
+				parent[rootB] = rootA;
+
+				if (numEdgesAdded == numNodes - 1) {
+					break;  // Encontrou todas as arestas necessárias
+				}
+			}
+		}
+
+		return mst;
+	}
+
+	@Override
+	public double calculateAverageDistance() {
+		double totalDistance = 0;
+		int count = 0;
+
+		for (int node = 0; node < getNumberOfNodes(); node++) {
+			double[] distances = bfs(node);
+
+			for (double distance : distances) {
+				if (distance > 0) {
+					totalDistance += distance;
+					count++;
+				}
+			}
+		}
+
+		return totalDistance / count;
+	}
+
+	private double[] bfs(int startNode) {
+		double[] distances = new double[getNumberOfNodes()];
+		Arrays.fill(distances, -1);
+
+		Queue<Integer> queue = new LinkedList<>();
+		distances[startNode] = 0;
+		queue.offer(startNode);
+
+		while (!queue.isEmpty()) {
+			int currentNode = queue.poll();
+
+			for (int neighbor = 0; neighbor < getNumberOfNodes(); neighbor++) {
+				if (adjacentMatrix[currentNode][neighbor] != 0 && distances[neighbor] == -1) {
+					distances[neighbor] = distances[currentNode] + 1;
+					queue.offer(neighbor);
+				}
+			}
+		}
+
+		return distances;
+	}
+
+	private int find(int[] parent, int node) {
+		if (parent[node] == -1) {
+			return node;
+		}
+		return find(parent, parent[node]);
 	}
 }

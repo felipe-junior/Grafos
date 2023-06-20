@@ -5,6 +5,7 @@ import graph.representation.IGraphRepresentation;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 
 import static graph.enums.SearchType.DFS;
 
@@ -108,5 +109,92 @@ public class GraphManager {
 			degreeCount += this.graph.getNodeDegree(node);
 		}
 		return (float) degreeCount / this.graph.getNumberOfNodes();
+	}
+
+
+	public float calculateDistance(int startNode, int endNode) {
+		List<Integer> shortestPath = graph.calculateShortestPath(startNode, endNode);
+		if (shortestPath.isEmpty()) {
+			return Float.POSITIVE_INFINITY; // Nenhum caminho encontrado
+		} else {
+			return calculatePathWeight(shortestPath);
+		}
+	}
+
+	public List<List<Integer>> calculateShortestPathFromNode(int startNode) {
+		List<List<Integer>> shortestPaths = new ArrayList<>();
+
+		for (int endNode = 0; endNode < graph.getNumberOfNodes(); endNode++) {
+			if (startNode != endNode) {
+				List<Integer> shortestPath = graph.calculateShortestPath(startNode, endNode);
+				shortestPaths.add(shortestPath);
+			} else {
+				shortestPaths.add(new ArrayList<>(List.of(startNode)));
+			}
+		}
+
+		return shortestPaths;
+	}
+
+	public void showDistanceOfNodes(int startNode, int endNode){
+		float distance = calculateDistance(startNode, endNode);
+
+		// Verifica se a distância é válida
+		if (distance >= 0) {
+			System.out.println("A distância entre " + startNode + " e " + endNode + " é: " + distance);
+		} else {
+			System.out.println("Não é possível alcançar o vértice de destino a partir do vértice de origem.");
+		}
+	}
+
+	public void showShortestPathFromNode(int startNode){
+		List<List<Integer>> shortestPaths = calculateShortestPathFromNode(startNode);
+
+		// Imprime a distância e o caminho mínimo entre o vértice de partida e todos os outros vértices
+		for (int endNode = 0; endNode < shortestPaths.size(); endNode++) {
+			if (endNode != startNode) {
+				List<Integer> shortestPath = shortestPaths.get(endNode);
+				int distance = shortestPath.size() - 1; // A distância é o número de arestas no caminho mínimo
+				System.out.println("Distância entre " + startNode + " e " + endNode + ": " + distance);
+				System.out.println("Caminho mínimo: " + shortestPath);
+				System.out.println();
+			}
+		}
+	}
+
+	private float calculatePathWeight(List<Integer> path) {
+		float weight = 0.0f;
+		for (int i = 0; i < path.size() - 1; i++) {
+			int currentNode = path.get(i);
+			int nextNode = path.get(i + 1);
+			weight += graph.calculateEdgeWeight(currentNode, nextNode);
+		}
+		return weight;
+	}
+
+	public void writeMinimumSpanningTreeToFile() {
+		List<Edge> minimumSpanningTree = graph.findMinimumSpanningTree();
+
+		String filename = outputGraphDirectory + graph.getClass().getSimpleName() + "-mst.txt";
+
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+			float totalWeight = 0.0f;
+			writer.write("Aresta \tPeso\n");
+
+			for (Edge edge : minimumSpanningTree) {
+				writer.write(edge.getNodeA() + " - " + edge.getNodeB() + "\t" + edge.getWeight() + "\n");
+				totalWeight += edge.getWeight();
+			}
+
+			writer.write("\nPeso máximo: " + totalWeight);
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+	}
+
+	public void getAverageDistance() {
+		double averageDistance = graph.calculateAverageDistance();
+		System.out.println("Distância média: " + averageDistance + "\n");
 	}
 }

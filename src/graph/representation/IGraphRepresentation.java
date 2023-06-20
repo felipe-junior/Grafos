@@ -6,14 +6,18 @@ import graph.Edge;
 import java.util.List;
 
 public interface IGraphRepresentation {
-	public void initialize(int numberOfVertex, List<Edge> edges);
-	public void addEdge(Edge edge);
-	public int getNumberOfEdges();
-	public int getNumberOfNodes();
-	public int getNodeDegree(int node);
-	public int getNumberOfNodesByDegree(int degree);
-	public int getMaximumDegree();
-	public String getDfsTree();
-	public String getBfsTree();
-	public void findAndShowConnectedComponents(String outputGraphDirectory);
+	void initialize(int numberOfVertex, List<Edge> edges);
+	void addEdge(Edge edge);
+	int getNumberOfEdges();
+	int getNumberOfNodes();
+	int getNodeDegree(int node);
+	int getNumberOfNodesByDegree(int degree);
+	int getMaximumDegree();
+	String getDfsTree();
+	String getBfsTree();
+	void findAndShowConnectedComponents(String outputGraphDirectory);
+	List<Integer> calculateShortestPath(int startNode, int endNode);
+	float calculateEdgeWeight(int nodeA, int nodeB);
+	List<Edge> findMinimumSpanningTree();
+	double calculateAverageDistance();
 }

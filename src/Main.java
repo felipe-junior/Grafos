@@ -41,10 +41,13 @@ public class Main {
 		do {
 			System.out.print("\nOpções: \n" +
 					"1 - Alterar representação entre matriz (Matriz/Lista) de adjacência\n" +
-					"2 - Gerar resultados do grafo no arquivo de saída\n" +
-					"3 - Percorrer o grafo (BFS, DFS)\n" +
-					"4 - Gerar componentes conexos\n" +
-					"5 - Alterar diretórios de arquivos do grafo\n" +
+					"2 - Alterar diretórios de arquivos do grafo\n" +
+					"3 - Gerar resultados do grafo no arquivo de saída\n" +
+					"4 - Percorrer o grafo (BFS, DFS)\n" +
+					"5 - Gerar componentes conexos\n" +
+					"6 - Calcular distância e caminho mínimo entre 2 vertices\n" +
+					"7 - Encontrar arvore geradora minima\n" +
+					"8 - Calcular distância média\n" +
 					"0 - Sair\n" +
 					"Sua opção: ");
 			menuOption = scanner.nextInt();
@@ -57,10 +60,14 @@ public class Main {
 						System.out.println("Representação alterada para " + graphType + " de adjacência.");
 						break;
 					case 2:
+						updateDirectories();
+						graphManager = updateGraphRepresentation(inputGraphFilePath, outputGraphDirectory);;
+						break;
+					case 3:
 						graphManager.generateGraphOutput();
 						System.out.println("Resultados do grafo gerado no arquivo 'output.txt' com sucesso!");
 						break;
-					case 3:
+					case 4:
 						System.out.println("Deseja percorrer a árvore com qual método ?");
 						System.out.println("1 - DFS");
 						System.out.println("2 - BFS");
@@ -72,13 +79,27 @@ public class Main {
 						graphManager.generateTree(searchType);
 						System.out.println("Resultados da árvore no método " + searchType + " gerado com sucesso!");
 						break;
-					case 4:
+					case 5:
 						graphManager.showConnectComponents();
 						System.out.println("Resultados componentes conexos gerado com sucesso!");
 						break;
-					case 5:
-						updateDirectories();
-						graphManager = updateGraphRepresentation(inputGraphFilePath, outputGraphDirectory);;
+					case 6:
+						System.out.println("Digite o vertice inicial: ");
+						var startNode = scanner.nextInt();
+
+						System.out.println("Digite o vertice final: ");
+						var endNode = scanner.nextInt();
+
+						graphManager.showDistanceOfNodes(startNode, endNode);
+						graphManager.showShortestPathFromNode(startNode);
+						System.out.println("Resultados de distância e caminho mínimo gerados com sucesso!");
+						break;
+					case 7:
+						graphManager.writeMinimumSpanningTreeToFile();
+						System.out.println("Arvore geradora minima gerada em um arquivo com sucesso!");
+						break;
+					case 8:
+						graphManager.getAverageDistance();
 						break;
 					case 0:
 						break;
@@ -90,7 +111,6 @@ public class Main {
 				System.out.println("\nErro! " + exception.getMessage());
 			}
 		} while (menuOption != 0);
-
 	}
 
 	private static void updateDirectories() {

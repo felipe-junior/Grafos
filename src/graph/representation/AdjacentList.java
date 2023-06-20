@@ -205,4 +205,173 @@ public class AdjacentList implements IGraphRepresentation {
 		return this.edges.size();
 	}
 
+	public float calculateShortestDistance(int startNode, int endNode) {
+		if (startNode == endNode) {
+			return 0.0f; // O nó inicial é o mesmo que o nó de destino, a distância é zero
+		}
+
+		float[] distances = new float[adjacentList.size()];
+		Arrays.fill(distances, Float.MAX_VALUE); // Inicializa todas as distâncias como infinito
+		distances[startNode] = 0.0f; // Define a distância do nó inicial como zero
+
+		PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.comparingDouble(node -> distances[node]));
+		queue.offer(startNode);
+
+		while (!queue.isEmpty()) {
+			int currentNode = queue.poll();
+
+			if (currentNode == endNode) {
+				return distances[currentNode]; // Retorna a distância mínima até o nó de destino
+			}
+
+			LinkedList<Integer> neighbors = adjacentList.get(currentNode);
+			for (int neighbor : neighbors) {
+				float weight = calculateEdgeWeight(currentNode, neighbor);
+
+				if (weight >= 0.0f && distances[currentNode] + weight < distances[neighbor]) {
+					distances[neighbor] = distances[currentNode] + weight;
+					queue.offer(neighbor);
+				}
+			}
+		}
+
+		return -1.0f; // Caso não seja possível alcançar o nó de destino a partir do nó inicial
+	}
+
+	@Override
+	public List<Integer> calculateShortestPath(int startNode, int endNode) {
+		List<Integer> shortestPath = new ArrayList<>();
+
+		if (startNode == endNode) {
+			shortestPath.add(startNode);
+			return shortestPath; // O nó inicial é o mesmo que o nó de destino, retorna uma lista com um único nó
+		}
+
+		float[] distances = new float[adjacentList.size()];
+		int[] parents = new int[adjacentList.size()];
+		Arrays.fill(distances, Float.MAX_VALUE); // Inicializa todas as distâncias como infinito
+		Arrays.fill(parents, -1); // Inicializa todos os pais como -1 (não visitado)
+		distances[startNode] = 0.0f; // Define a distância do nó inicial como zero
+
+		PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.comparingDouble(node -> distances[node]));
+		queue.offer(startNode);
+
+		while (!queue.isEmpty()) {
+			int currentNode = queue.poll();
+
+			if (currentNode == endNode) {
+				// Constrói o caminho mínimo a partir dos pais
+				int node = endNode;
+				while (node != -1) {
+					shortestPath.add(0, node);
+					node = parents[node];
+				}
+				return shortestPath;
+			}
+
+			LinkedList<Integer> neighbors = adjacentList.get(currentNode);
+			for (int neighbor : neighbors) {
+				float weight = calculateEdgeWeight(currentNode, neighbor);
+
+				if (distances[currentNode] + weight < distances[neighbor]) {
+					distances[neighbor] = distances[currentNode] + weight;
+					parents[neighbor] = currentNode;
+					queue.offer(neighbor);
+				}
+			}
+		}
+
+		return shortestPath; // Retorna uma lista vazia caso não seja possível alcançar o nó de destino a partir do nó inicial
+	}
+	@Override
+	public float calculateEdgeWeight(int nodeA, int nodeB) {
+		for (Edge edge : edges) {
+			if ((edge.getNodeA() == nodeA && edge.getNodeB() == nodeB) ||
+					(edge.getNodeA() == nodeB && edge.getNodeB() == nodeA)) {
+				return edge.getWeight();
+			}
+		}
+		return -1.0f; // Ou outro valor adequado para indicar que a aresta não foi encontrada
+	}
+
+	@Override
+	public List<Edge> findMinimumSpanningTree() {
+		List<Edge> mst = new ArrayList<>();
+
+		// Ordena as arestas pelo peso em ordem crescente
+		List<Edge> sortedEdges = new ArrayList<>(edges);
+		sortedEdges.sort(Comparator.comparingDouble(Edge::getWeight));
+
+		int[] parent = new int[adjacentList.size()];
+		Arrays.fill(parent, -1);
+
+		int numEdgesAdded = 0;
+		int numNodes = adjacentList.size() - 1;
+
+		for (Edge edge : sortedEdges) {
+			int rootA = find(parent, edge.getNodeA() - 1);
+			int rootB = find(parent, edge.getNodeB() - 1);
+
+			if (rootA != rootB) {
+				mst.add(edge);
+				numEdgesAdded++;
+				parent[rootB] = rootA;
+
+				if (numEdgesAdded == numNodes - 1) {
+					break;  // Encontrou todas as arestas necessárias
+				}
+			}
+		}
+
+		return mst;
+	}
+
+	@Override
+	public double calculateAverageDistance() {
+		double totalDistance = 0;
+		int count = 0;
+
+		for (int node = 0; node < getNumberOfNodes(); node++) {
+			int[] distances = bfs(node);
+
+			for (int distance : distances) {
+				if (distance > 0) {
+					totalDistance += distance;
+					count++;
+				}
+			}
+		}
+
+		return totalDistance / count;
+	}
+
+	private int[] bfs(int startNode) {
+		int[] distances = new int[getNumberOfNodes()];
+		Arrays.fill(distances, -1);
+
+		Queue<Integer> queue = new LinkedList<>();
+		distances[startNode] = 0;
+		queue.offer(startNode);
+
+		while (!queue.isEmpty()) {
+			int currentNode = queue.poll();
+
+			LinkedList<Integer> neighbors = adjacentList.get(currentNode);
+			for (int neighbor : neighbors) {
+				if (distances[neighbor] == -1) {
+					distances[neighbor] = distances[currentNode] + 1;
+					queue.offer(neighbor);
+				}
+			}
+		}
+
+		return distances;
+	}
+
+	private int find(int[] parent, int node) {
+		if (parent[node] == -1) {
+			return node;
+		}
+		return find(parent, parent[node]);
+	}
 }

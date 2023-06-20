@@ -4,18 +4,18 @@ public class Edge
 {
 	private int NodeA;
 	private int NodeB;
-	private Float Wheight;
+	private Float Weight;
 
 	public Edge(int nodeA, int nodeB) {
 		NodeA = nodeA;
 		NodeB = nodeB;
-		Wheight = null;
+		Weight = null;
 	}
 
-	public Edge(int nodeA, int nodeB, Float wheight) {
+	public Edge(int nodeA, int nodeB, Float weight) {
 		NodeA = nodeA;
 		NodeB = nodeB;
-		Wheight = wheight;
+		Weight = weight;
 	}
 
 	public int getNodeA() {
@@ -34,11 +34,11 @@ public class Edge
 		NodeB = nodeB;
 	}
 
-	public Float getWheight() {
-		return Wheight;
+	public Float getWeight() {
+		return Weight;
 	}
 
-	public void setWheight(Float wheight) {
-		Wheight = wheight;
+	public void setWeight(Float weight) {
+		Weight = weight;
 	}
 }
