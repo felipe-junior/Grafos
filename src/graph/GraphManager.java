@@ -113,7 +113,9 @@ public class GraphManager {
 
 
 	public float calculateDistance(int startNode, int endNode) {
-		List<Integer> shortestPath = graph.calculateShortestPath(startNode, endNode);
+
+		var response = graph.calculateShortestPath(startNode, endNode);
+		var shortestPath = response.values().stream().findFirst().orElse(null);
 		if (shortestPath.isEmpty()) {
 			return Float.POSITIVE_INFINITY; // Nenhum caminho encontrado
 		} else {

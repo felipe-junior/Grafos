@@ -4,6 +4,7 @@ package graph.representation;
 import graph.Edge;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IGraphRepresentation {
 	void initialize(int numberOfVertex, List<Edge> edges);
@@ -16,7 +17,7 @@ public interface IGraphRepresentation {
 	String getDfsTree();
 	String getBfsTree();
 	void findAndShowConnectedComponents(String outputGraphDirectory);
-	List<Integer> calculateShortestPath(int startNode, int endNode);
+	Map<Float, List<Integer>> calculateShortestPath(int startNode, int endNode);
 	float calculateEdgeWeight(int nodeA, int nodeB);
 	List<Edge> findMinimumSpanningTree();
 	double calculateAverageDistance();

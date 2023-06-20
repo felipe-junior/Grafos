@@ -239,12 +239,14 @@ public class AdjacentList implements IGraphRepresentation {
 	}
 
 	@Override
-	public List<Integer> calculateShortestPath(int startNode, int endNode) {
+	public Map<Float, List<Integer>> calculateShortestPath(int startNode, int endNode) {
 		List<Integer> shortestPath = new ArrayList<>();
-
+		var response = new HashMap<Float, List<Integer>>();
 		if (startNode == endNode) {
 			shortestPath.add(startNode);
-			return shortestPath; // O nó inicial é o mesmo que o nó de destino, retorna uma lista com um único nó
+			response.put(0f, shortestPath);
+			return response;
+			// O nó inicial é o mesmo que o nó de destino, retorna uma lista com um único nó
 		}
 
 		float[] distances = new float[adjacentList.size()];
@@ -266,7 +268,7 @@ public class AdjacentList implements IGraphRepresentation {
 					shortestPath.add(0, node);
 					node = parents[node];
 				}
-				return shortestPath;
+				response.put(0f, shortestPath);
 			}
 
 			LinkedList<Integer> neighbors = adjacentList.get(currentNode);
@@ -281,7 +283,7 @@ public class AdjacentList implements IGraphRepresentation {
 			}
 		}
 
-		return shortestPath; // Retorna uma lista vazia caso não seja possível alcançar o nó de destino a partir do nó inicial
+		return response; // Retorna uma lista vazia caso não seja possível alcançar o nó de destino a partir do nó inicial
 	}
 	@Override
 	public float calculateEdgeWeight(int nodeA, int nodeB) {

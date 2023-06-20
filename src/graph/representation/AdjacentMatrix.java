@@ -219,36 +219,19 @@ public class AdjacentMatrix implements IGraphRepresentation {
 		return this.edges.size();
 	}
 
-	class Path implements Comparable<Path>
-	{
-		Path predecessor;
-		float cost;
-
-		int id;
-
-		Path(Path _predecessor, float _cost, int _id)
-		{
-			this.predecessor = _predecessor;
-			this.cost = _cost;
-			this.id = _id;
-		}
-
-		@Override
-		public int compareTo(Path other) {
-			return Float.compare(cost, other.cost);
-		}
-	}
 
 	@Override
-	public List<Integer> calculateShortestPath(int vertexA, int vertexB)
+	public Map<Float, List<Integer>> calculateShortestPath(int vertexA, int vertexB)
 	{
+		System.out.println("***************");
+		System.out.println("Encontrando caminho de " + (vertexA+1) + " até " + (vertexB+1));
 		var paths = new Path[adjacentMatrix.length];
 		for (int i = 0; i < adjacentMatrix.length; i++) {
 			paths[i] = new Path(null, Integer.MAX_VALUE, vertexA);
 		}
 
 		paths[vertexA] = new Path(null, 0, vertexA);
-
+		var response = new HashMap<Float, List<Integer>>();
 		Set<Integer> visited = new HashSet<Integer>();
 		PriorityQueue<Path> queue = new PriorityQueue<>(adjacentMatrix.length);
 		queue.add(paths[vertexA]);
@@ -279,13 +262,12 @@ public class AdjacentMatrix implements IGraphRepresentation {
 						queue.add(paths[i]);
 				}
 			}
-
 		}
+		List<Integer> results = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		if(currentPath!=null)
 		{
 			var shortPath = currentPath;
-			List<Integer> results = new ArrayList<>();
 			while (shortPath!= null)
 			{
 				results.add(shortPath.id);
@@ -300,9 +282,9 @@ public class AdjacentMatrix implements IGraphRepresentation {
 		}
 		System.out.println(sb);
 		System.out.println("Custo: " + currentPath.cost);
-		return null;
+		response.put(currentPath.cost, results);
+		return response;
 	}
-
 
 	@Override
 	public float calculateEdgeWeight(int nodeA, int nodeB) {
@@ -343,21 +325,23 @@ public class AdjacentMatrix implements IGraphRepresentation {
 
 	@Override
 	public double calculateAverageDistance() {
-		double totalDistance = 0;
-		int count = 0;
+		Float totalDistance = 0f;
 
 		for (int node = 0; node < getNumberOfNodes(); node++) {
-			double[] distances = bfs(node);
-
-			for (double distance : distances) {
-				if (distance > 0) {
-					totalDistance += distance;
-					count++;
+			for (int neighboor = 0; neighboor < node ; neighboor++) {
+				if(node != neighboor)
+				{
+					var response = this.calculateShortestPath(node, neighboor);
+					var cost = response.keySet().stream().findFirst().orElse(null);
+					if(cost != null)
+					{
+						totalDistance += cost;
+					}
 				}
 			}
 		}
 
-		return totalDistance / count;
+		return totalDistance / (getNumberOfNodes() * (getNumberOfNodes() - 1));
 	}
 
 	private double[] bfs(int startNode) {
