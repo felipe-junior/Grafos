@@ -247,7 +247,7 @@ public class AdjacentMatrix implements IGraphRepresentation {
 				var isNotVisited = visited.stream().noneMatch(x -> x == finalI);
 
 				//Encontra os vizinhos e faz o relaxamento
-				if (adjacentMatrix[currentPath.id][i] != 0 && adjacentMatrix[currentPath.id][i] != null && isNotVisited)
+				if (adjacentMatrix[currentPath.id][i] > 0 && adjacentMatrix[currentPath.id][i] != null && isNotVisited)
 				{
 					var cost = adjacentMatrix[currentPath.id][i];
 					var totalCost = cost + paths[currentPath.id].cost;
